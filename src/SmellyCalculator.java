@@ -2,58 +2,80 @@ import java.util.Scanner;
 
 public class SmellyCalculator {
 
-    static Scanner scanner = new Scanner(System.in);
-    static double num1, num2, result;
-    static String operation, choice;
-
     public static void main(String[] args) {
-        System.out.println("Welcome to the Worst Calculator!");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Welcome to Refactored Calculator!");
 
-        System.out.println("Enter first number: ");
-        num1 = scanner.nextDouble();
-        System.out.println("Enter second number: ");
-        num2 = scanner.nextDouble();
-        System.out.println("Choose operation: (+, -, *, /): ");
-        operation = scanner.next();
+        boolean keepRunning = true;
 
-        if (operation.equals("+")) {
-            result = num1 + num2;
-            System.out.println("Result: " + result);
-        } else if (operation.equals("-")) {
-            result = num1 - num2;
-            System.out.println("Result: " + result);
-        } else if (operation.equals("*")) {
-            result = num1 * num2;
-            System.out.println("Result: " + result);
-        } else if (operation.equals("/")) {
-            if (num2 != 0) {
-                result = num1 / num2;
-                System.out.println("Result: " + result);
-            } else {
-                System.out.println("Error: Division by zero!");
+        while (keepRunning) {
+            double num1 = getNumber(scanner, "Enter first number: ");
+            double num2 = getNumber(scanner, "Enter second number: ");
+            String operation = getOperation(scanner);
+
+            double result = performOperation(num1, num2, operation);
+            if (!Double.isNaN(result)) {
+                System.out.println("The result is: " + result);
             }
-        } else {
-            System.out.println("Invalid operation!");
+
+            keepRunning = askToContinue(scanner);
         }
 
-        System.out.println("Would you like to continue? (yes/no): ");
-        choice = scanner.next();
-        if (choice.equalsIgnoreCase("yes")) {
-            restartCalculator();
-        } else if (choice.equalsIgnoreCase("no")) {
-            System.out.println("Goodbye!");
-            System.exit(0);
-        } else {
-            System.out.println("Invalid input! Exiting...");
-            System.exit(0);
+        System.out.println("Goodbye!");
+        scanner.close();
+    }
+
+    private static double getNumber(Scanner scanner, String prompt) {
+        System.out.println(prompt);
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            scanner.next();
+        }
+        return scanner.nextDouble();
+    }
+
+    private static String getOperation(Scanner scanner) {
+        System.out.println("Choose operation: (+, -, *, /): ");
+        String operation = scanner.next();
+        while (!isValidOperation(operation)) {
+            System.out.println("Invalid operation. Please choose one of (+, -, *, /): ");
+            operation = scanner.next();
+        }
+        return operation;
+    }
+
+    private static boolean isValidOperation(String operation) {
+        return operation.equals("+") || operation.equals("-") || operation.equals("*") || operation.equals("/");
+    }
+
+    private static double performOperation(double num1, double num2, String operation) {
+        switch (operation) {
+            case "+":
+                return num1 + num2;
+            case "-":
+                return num1 - num2;
+            case "*":
+                return num1 * num2;
+            case "/":
+                if (num2 != 0) {
+                    return num1 / num2;
+                } else {
+                    System.out.println("Error: Division by zero!");
+                    return Double.NaN;
+                }
+            default:
+                System.out.println("Invalid operation!");
+                return Double.NaN;
         }
     }
 
-    public static void dummyMethod() {
-        System.out.println("This does absolutely nothing!");
-    }
-
-    public static void restartCalculator() {
-        main(null);
+    private static boolean askToContinue(Scanner scanner) {
+        System.out.println("Would you like to perform another operation? (yes/no): ");
+        String choice = scanner.next();
+        while (!choice.equalsIgnoreCase("yes") && !choice.equalsIgnoreCase("no")) {
+            System.out.println("Invalid input. Please enter 'yes' or 'no': ");
+            choice = scanner.next();
+        }
+        return choice.equalsIgnoreCase("yes");
     }
 }
